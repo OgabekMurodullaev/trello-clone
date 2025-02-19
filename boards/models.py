@@ -74,3 +74,72 @@ class Card(models.Model):
     class Meta:
         verbose_name = "Card"
         verbose_name_plural = "Cards"
+
+
+class CardMember(models.Model):
+    card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name="members")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="cards")
+    added_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.card.title} - {self.user.email}"
+
+
+class Label(models.Model):
+    title = models.CharField(max_length=120)
+    color = models.ImageField(upload_to='label-colors/')
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = "Label"
+        verbose_name_plural = "Labels"
+
+class CardLabel(models.Model):
+    card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name="labels")
+    label = models.ForeignKey(Label, on_delete=models.CASCADE, related_name="cards")
+
+    def __str__(self):
+        return f"{self.card.title} - {self.label.title}"
+
+
+class Checklist(models.Model):
+    title = models.CharField(max_length=120)
+    card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name="checklists")
+
+    def __str__(self):
+        return f"{self.card.title} - {self.title}"
+
+    class Meta:
+        verbose_name = "Checklist"
+        verbose_name_plural = "Checklists"
+
+
+class ChecklistItem(models.Model):
+    checklist = models.ForeignKey(Checklist, on_delete=models.CASCADE, related_name="items")
+    text = models.TextField()
+    is_completed = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.checklist.title} - {self.text[:50]}"
+
+    class Meta:
+        verbose_name = "ChecklistItem"
+        verbose_name_plural = "ChecklistItems"
+
+
+class Comment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
+    card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name="comments")
+    text = models.TextField()
+    image = models.ImageField(upload_to="comment-images/")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.card.title} - comment by {self.user.email}"
+
+    class Meta:
+        verbose_name = "Comment"
+        verbose_name_plural = "Comments"
