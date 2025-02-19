@@ -26,15 +26,16 @@ class WorkspaceMember(models.Model):
         return f"{self.workspace.name} - {self.member.email}"
 
     class Meta:
+        unique_together = ('workspace', 'member')
         verbose_name = "WorkspaceMember"
         verbose_name_plural = "WorkspaceMembers"
 
 
 class Board(models.Model):
     VISIBILITY_CHOICES = (
-        ('Private', 'private'),
-        ('Public', 'public'),
-        ('Workspace', 'workspace')
+        ('private', 'Private'),
+        ('public', 'Public'),
+        ('workspace', 'Workspace')
     )
 
     title = models.CharField(max_length=120)
@@ -52,7 +53,7 @@ class Board(models.Model):
 
 class List(models.Model):
     title = models.CharField(max_length=120)
-    colour = models.ImageField(upload_to='list-colours/')
+    colour = models.CharField(max_length=7, help_text="Hex color (e.g. #FF5733)")
     board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name="lists")
 
     def __str__(self):
@@ -66,7 +67,7 @@ class Card(models.Model):
     title = models.CharField(max_length=120)
     description = models.TextField()
     list = models.ForeignKey(List, on_delete=models.CASCADE, related_name="cards")
-    due_date = models.DateTimeField()
+    due_date = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.list.title} - {self.title}"
@@ -84,10 +85,14 @@ class CardMember(models.Model):
     def __str__(self):
         return f"{self.card.title} - {self.user.email}"
 
+    class Meta:
+        unique_together = ('card', 'user')
+        verbose_name = "CardMember"
+        verbose_name_plural = "CardMembers"
 
 class Label(models.Model):
     title = models.CharField(max_length=120)
-    color = models.ImageField(upload_to='label-colors/')
+    color = models.CharField(max_length=7, help_text="Hex color (e.g. #FF5733)")
 
     def __str__(self):
         return self.title
@@ -118,7 +123,7 @@ class Checklist(models.Model):
 
 class ChecklistItem(models.Model):
     checklist = models.ForeignKey(Checklist, on_delete=models.CASCADE, related_name="items")
-    text = models.TextField()
+    text = models.CharField(max_length=255)
     is_completed = models.BooleanField(default=False)
 
     def __str__(self):
@@ -133,7 +138,7 @@ class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
     card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name="comments")
     text = models.TextField()
-    image = models.ImageField(upload_to="comment-images/")
+    image = models.ImageField(upload_to="comment-images/", null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
