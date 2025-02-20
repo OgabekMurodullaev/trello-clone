@@ -1,21 +1,8 @@
 from django.contrib import admin
 from .models import (
-    Workspace, WorkspaceMember, Board, List, Card,
+    Board, List, Card,
     CardMember, Label, CardLabel, Checklist, ChecklistItem, Comment, Attachment
 )
-
-
-@admin.register(Workspace)
-class WorkspaceAdmin(admin.ModelAdmin):
-    list_display = ('name', 'owner', 'created_at')
-    search_fields = ('name', 'owner__email')
-    list_filter = ('created_at',)
-
-
-@admin.register(WorkspaceMember)
-class WorkspaceMemberAdmin(admin.ModelAdmin):
-    list_display = ('workspace', 'member')
-    search_fields = ('workspace__name', 'member__email')
 
 
 @admin.register(Board)
