@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import (
     Workspace, WorkspaceMember, Board, List, Card,
-    CardMember, Label, CardLabel, Checklist, ChecklistItem, Comment
+    CardMember, Label, CardLabel, Checklist, ChecklistItem, Comment, Attachment
 )
 
 
@@ -36,6 +36,11 @@ class CardAdmin(admin.ModelAdmin):
     list_display = ('title', 'list', 'due_date')
     search_fields = ('title', 'list__title')
     list_filter = ('due_date',)
+
+
+@admin.register(Attachment)
+class AttachmentAdmin(admin.ModelAdmin):
+    list_display = ('card', 'uploaded_by', 'uploaded_at')
 
 
 @admin.register(CardMember)

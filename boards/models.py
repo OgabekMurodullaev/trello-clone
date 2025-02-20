@@ -77,6 +77,13 @@ class Card(models.Model):
         verbose_name_plural = "Cards"
 
 
+class Attachment(models.Model):
+    card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name="attachments")
+    uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="attachments")
+    file = models.FileField(upload_to="attachments/")
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+
 class CardMember(models.Model):
     card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name="members")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="cards")
