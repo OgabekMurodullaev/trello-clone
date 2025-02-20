@@ -40,7 +40,6 @@ LOCAL_APPS = [
     'accounts',
     'activity_log',
     'boards',
-    'comments',
     'notifications',
 ]
 
