@@ -1,26 +1,24 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from .models import User
 
-from accounts.models import User
-
-
-class CustomUserAdmin(UserAdmin):
-    model = User
-    list_display = ('email', 'username', 'is_staff', 'is_active', 'is_superuser')
-    list_filter = ('is_staff', 'is_superuser', 'is_active')
-    search_fields = ('email', 'username')
-    ordering = ('email',)
+@admin.register(User)
+class UserAdmin(BaseUserAdmin):
+    list_display = ("email", "username", "is_active", "is_staff", "is_superuser")
+    list_filter = ("is_active", "is_staff", "is_superuser")
+    search_fields = ("email", "username")
+    ordering = ("email",)
     fieldsets = (
-        (None, {'fields': ('email', 'password')}),
-        ('Personal info', {'fields': ('avatar', 'bio', 'username')}),
-        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser')}),
-        ('Important dates', {'fields': ('last_login',)}),
+        (None, {"fields": ("email", "password")}),
+        ("Personal Info", {"fields": ("username", "avatar", "bio")}),
+        ("Permissions", {"fields": ("is_active", "is_staff", "is_superuser", "groups", "user_permissions")}),
+        ("Important dates", {"fields": ("last_login", "date_joined")}),
     )
     add_fieldsets = (
-        (None, {'fields': ('email', 'password1', 'password2')}),
-        ('Personal info', {'fields': ('avatar', 'bio', 'username')}),
-        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser')}),
+        (None, {
+            "classes": ("wide",),
+            "fields": ("email", "password1", "password2", "is_active", "is_staff", "is_superuser"),
+        }),
     )
 
-admin.site.register(User, CustomUserAdmin)
-
+    filter_horizontal = ("groups", "user_permissions")

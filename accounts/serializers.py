@@ -16,11 +16,6 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Bu email bilan ro'yxatdan o'tilgan")
         return email
 
-    def validate_password(self, value):
-        if len(value) < 8:
-            raise serializers.ValidationError("Parol 8 ta belgidan kam bo'lmasligi kerak")
-        return value
-
     def create(self, validated_data):
         user = User.objects.create(first_name=validated_data["first_name"],
                                    last_name=validated_data["last_name"],
