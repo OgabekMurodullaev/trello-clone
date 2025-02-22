@@ -11,6 +11,7 @@ class UserManager(BaseUserManager):
             raise ValueError("Password must be provided")
 
         email = self.normalize_email(email)
+        extra_fields.setdefault("is_active", True)
         extra_fields.setdefault("is_staff", False)
         extra_fields.setdefault("is_superuser", False)
 

@@ -5,11 +5,11 @@ from accounts.models import User
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, min_length=8)
 
     class Meta:
         model = User
-        fields = ("first_name", "last_name", "email", "password")
+        fields = ("id", "first_name", "last_name", "email", "password",)
+        extra_kwargs = {"password": {"write_only": True}}
 
     def validate_email(self, email):
         if User.objects.filter(email=email).exists():
@@ -17,11 +17,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         return email
 
     def create(self, validated_data):
-        user = User.objects.create(first_name=validated_data["first_name"],
-                                   last_name=validated_data["last_name"],
-                                   email=validated_data["email"])
-        user.set_password(validated_data["password"])
-        user.save()
+        user = User.objects.create_user(**validated_data)
         return user
 
 
