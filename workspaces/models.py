@@ -21,6 +21,10 @@ class Workspace(models.Model):
 class WorkspaceMember(models.Model):
     workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE)
     member = models.ForeignKey(User, on_delete=models.CASCADE)
+    is_active = models.BooleanField(default=False)
+    invited_at = models.DateTimeField(auto_now_add=True)
+
+    objects = models.Manager()
 
     def __str__(self):
         return f"{self.workspace.name} - {self.member.email}"

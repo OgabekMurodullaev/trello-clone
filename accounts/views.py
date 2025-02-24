@@ -19,9 +19,7 @@ class UserCreateView(CreateAPIView):
 
         send_welcome_email_async(user.id)
 
-    def create(self, request, *args, **kwargs):
-        response = super().create(request, *args, **kwargs)
-        return response
+        return Response({"detail": "Siz muvaffaqiyatli ro'yxatdan o'tdingiz!"}, status=status.HTTP_201_CREATED)
 
 class UserLoginAPIView(APIView):
     permission_classes = [AllowAny]
