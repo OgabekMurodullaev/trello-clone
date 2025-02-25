@@ -35,3 +35,7 @@ class AddMemberWorkspaceSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"detail": "Ushbu foydalanuvchi allaqachon qo'shilgan"})
 
         return WorkspaceMember.objects.create(workspace=workspace, member=member)
+
+
+class InviteMemberSerializer(serializers.Serializer):
+    email = serializers.EmailField()

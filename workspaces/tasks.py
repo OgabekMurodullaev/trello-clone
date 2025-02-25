@@ -11,3 +11,4 @@ def send_invite_email(workspace_name, email, accept_url, reject_url):
         👉 Qabul qilish: {accept_url}
         ❌ Rad etish: {reject_url}"""
     send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [email])
+    return "Email sent"
