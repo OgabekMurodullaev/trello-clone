@@ -16,13 +16,14 @@ class Board(models.Model):
     visibility = models.CharField(max_length=10, choices=VISIBILITY_CHOICES, default='private')
     background = models.ImageField(upload_to='board-backgrounds/', null=True, blank=True)
 
+    objects = models.Manager()
+
     def __str__(self):
         return f"{self.workspace.name} - {self.title}"
 
     class Meta:
         verbose_name = "Board"
         verbose_name_plural = "Boards"
-
 
 class List(models.Model):
     title = models.CharField(max_length=120)

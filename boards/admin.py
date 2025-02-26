@@ -7,7 +7,7 @@ from .models import (
 
 @admin.register(Board)
 class BoardAdmin(admin.ModelAdmin):
-    list_display = ('title', 'workspace', 'visibility')
+    list_display = ('id', 'title', 'workspace', 'visibility')
     search_fields = ('title', 'workspace__name')
     list_filter = ('visibility',)
 

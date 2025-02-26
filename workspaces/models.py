@@ -21,7 +21,7 @@ class Workspace(models.Model):
 
 
 class WorkspaceMember(models.Model):
-    workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE)
+    workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE, related_name="members")
     member = models.ForeignKey(User, on_delete=models.CASCADE)
     is_active = models.BooleanField(default=False)
     invited_at = models.DateTimeField(auto_now_add=True)

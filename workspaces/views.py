@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 
 from accounts.models import User
 from workspaces.models import Workspace, WorkspaceMember, WorkspaceInvitation
-from workspaces.permissions import IsOwner
+from workspaces.permissions import IsOwnerOrMember
 from workspaces.serializers import WorkspaceSerializer, AddMemberWorkspaceSerializer, InviteMemberSerializer
 from workspaces.tasks import send_invite_email
 
@@ -28,7 +28,7 @@ class WorkspaceListCreateAPIView(generics.ListCreateAPIView):
 
 
 class WorkspaceRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAuthenticated, IsOwner]
+    permission_classes = [IsOwnerOrMember]
     serializer_class = WorkspaceSerializer
 
     def get_queryset(self):
@@ -70,6 +70,7 @@ class InviteMemberToWorkspace(APIView):
 
 class AcceptInvitationView(APIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = InviteMemberSerializer
 
     def post(self, request, workspace_id, email):
         invitation = get_object_or_404(WorkspaceInvitation, workspace_id=workspace_id, email=email, status='pending')
@@ -84,6 +85,7 @@ class AcceptInvitationView(APIView):
 
 class RejectInvitationView(APIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = InviteMemberSerializer
 
     def post(self, request, workspace_id, email):
         invitation = get_object_or_404(WorkspaceInvitation, workspace_id=workspace_id, email=email, status='pending')
@@ -97,7 +99,7 @@ class RejectInvitationView(APIView):
 
 
 class RemoveMemberFromWorkspace(DestroyAPIView):
-    permission_classes = [IsAuthenticated, IsOwner]
+    permission_classes = [IsOwnerOrMember]
     serializer_class = AddMemberWorkspaceSerializer
 
     def get_object(self):
