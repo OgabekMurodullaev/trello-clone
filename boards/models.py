@@ -30,6 +30,8 @@ class List(models.Model):
     colour = models.CharField(max_length=7, help_text="Hex color (e.g. #FF5733)")
     board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name="lists")
 
+    objects = models.Manager()
+
     def __str__(self):
         return f"{self.board.title} - {self.title}"
 

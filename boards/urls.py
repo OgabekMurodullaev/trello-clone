@@ -1,10 +1,8 @@
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-from .views import BoardViewSet
+from django.urls import path
 
-router = DefaultRouter()
-router.register(r'', BoardViewSet, basename="board")
+from boards.views import BoardListCreateAPIView, BoardDetailAPIView
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path('', BoardListCreateAPIView.as_view(), name='list_create'),
+    path('<int:board_id>/', BoardDetailAPIView.as_view(), name='get_update_delete'),
 ]
