@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import (
-    Board, List, Card,
+    Board, TaskList, Card,
     CardMember, Label, CardLabel, Checklist, ChecklistItem, Comment, Attachment
 )
 
@@ -12,7 +12,7 @@ class BoardAdmin(admin.ModelAdmin):
     list_filter = ('visibility',)
 
 
-@admin.register(List)
+@admin.register(TaskList)
 class ListAdmin(admin.ModelAdmin):
     list_display = ('title', 'board')
     search_fields = ('title', 'board__title')

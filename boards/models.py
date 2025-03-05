@@ -25,7 +25,7 @@ class Board(models.Model):
         verbose_name = "Board"
         verbose_name_plural = "Boards"
 
-class List(models.Model):
+class TaskList(models.Model):
     title = models.CharField(max_length=120)
     colour = models.CharField(max_length=7, help_text="Hex color (e.g. #FF5733)")
     board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name="lists")
@@ -42,7 +42,7 @@ class List(models.Model):
 class Card(models.Model):
     title = models.CharField(max_length=120)
     description = models.TextField()
-    list = models.ForeignKey(List, on_delete=models.CASCADE, related_name="cards")
+    list = models.ForeignKey(TaskList, on_delete=models.CASCADE, related_name="cards")
     due_date = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
@@ -75,7 +75,7 @@ class CardMember(models.Model):
 
 class Label(models.Model):
     title = models.CharField(max_length=120)
-    color = models.CharField(max_length=7, help_text="Hex color (e.g. #FF5733)")
+    color = models.CharField(max_length=7, help_text="Hex color (e.g. #FF5733)", default="#FFFFFF")
 
     def __str__(self):
         return self.title
