@@ -1,5 +1,3 @@
-from logging import raiseExceptions
-
 from rest_framework import status
 from drf_spectacular.utils import extend_schema
 from rest_framework.generics import get_object_or_404
@@ -100,3 +98,46 @@ class TaskListCreateAPIView(APIView):
             serializer.save(board=board)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class TaskListDetailAPIView(APIView):
+    permission_classes = [IsAuthenticated, IsWorkspaceMemberOrOwner]
+    serializer_class = TaskListSerializer
+
+    @extend_schema(operation_id="retrieve_task_list")
+    def get(self, request, board_id, list_id):
+        board = get_object_or_404(Board, id=board_id)
+        self.check_object_permissions(request, board)
+
+        t_list = get_object_or_404(TaskList, id=list_id)
+        serializer = TaskListSerializer(t_list)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @extend_schema(operation_id="update_put_task_list")
+    def put(self, request, board_id, list_id):
+        board = get_object_or_404(Board, id=board_id)
+        self.check_object_permissions(request, board)
+
+        t_list = get_object_or_404(TaskList, id=list_id)
+        serializer = TaskListSerializer(t_list, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @extend_schema(operation_id="update_patch_task_list")
+    def patch(self, request, board_id, list_id):
+        board = get_object_or_404(Board, id=board_id)
+        self.check_object_permissions(request, board)
+
+        t_list = get_object_or_404(TaskList, id=list_id)
+        serializer = TaskListSerializer(t_list, data=request.data, partial=True)
+
+    @extend_schema(operation_id="delete_task_list")
+    def delete(self, request, board_id, list_id):
+        board = get_object_or_404(Board, id=board_id)
+        self.check_object_permissions(request, board)
+
+        t_list = get_object_or_404(TaskList, id=list_id)
+        t_list.delete()
+        return Response({"detail": "List o'chirib tashlandi"}, status=status.HTTP_204_NO_CONTENT)

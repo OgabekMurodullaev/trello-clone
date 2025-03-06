@@ -33,6 +33,9 @@ LOCAL_APPS = [
     'boards',
     'notifications',
     'workspaces',
+    'labels',
+    'cards',
+    'checklists',
 ]
 
 THIRD_PARTY_APPS = [
