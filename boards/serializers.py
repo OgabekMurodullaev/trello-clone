@@ -32,22 +32,11 @@ class BoardSerializer(serializers.ModelSerializer):
 
 class TaskListSerializer(serializers.ModelSerializer):
     board = serializers.SerializerMethodField(method_name="get_board")
-    board_id = serializers.PrimaryKeyRelatedField(queryset=Board.objects.all(), write_only=True)
 
     class Meta:
         model = TaskList
-        fields = ('id', 'title', 'board', 'board_id', 'colour')
+        fields = ('id', 'title', 'board')
 
     def get_board(self, obj):
-        return {"id", obj.board.id, "title", obj.board.title}
+        return {"id": obj.board.id, "title": obj.board.title}
 
-    def validate_board_id(self, value):
-        user = self.context['request'].user
-        if user != value.workspace.owner and user not in value.workspace.members.all():
-            raise serializers.ValidationError("Siz ushbu workspace egasi/a'zosi emassiz")
-        return value
-
-    def create(self, validated_data):
-        board = validated_data['board_id']
-        t_list = TaskList.objects.create(board=board, **validated_data)
-        return t_list

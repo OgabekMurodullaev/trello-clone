@@ -27,7 +27,6 @@ class Board(models.Model):
 
 class TaskList(models.Model):
     title = models.CharField(max_length=120)
-    colour = models.CharField(max_length=7, help_text="Hex color (e.g. #FF5733)")
     board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name="lists")
 
     objects = models.Manager()
@@ -36,8 +35,8 @@ class TaskList(models.Model):
         return f"{self.board.title} - {self.title}"
 
     class Meta:
-        verbose_name = "List"
-        verbose_name_plural = "Lists"
+        verbose_name = "TaskList"
+        verbose_name_plural = "TaskLists"
 
 class Card(models.Model):
     title = models.CharField(max_length=120)

@@ -14,7 +14,7 @@ class BoardAdmin(admin.ModelAdmin):
 
 @admin.register(TaskList)
 class ListAdmin(admin.ModelAdmin):
-    list_display = ('title', 'board')
+    list_display = ('id', 'title', 'board')
     search_fields = ('title', 'board__title')
 
 

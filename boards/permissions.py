@@ -13,3 +13,10 @@ class IsOwnerOrReadOnly(BasePermission):
             return request.method in ["GET", "HEAD", "OPTIONS"]
 
         return False
+
+
+class IsWorkspaceMemberOrOwner(BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+        workspace = obj.workspace
+        return request.user == workspace.owner or request.user in workspace.members.all()
