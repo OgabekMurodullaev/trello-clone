@@ -10,6 +10,8 @@ class Card(models.Model):
     list = models.ForeignKey(TaskList, on_delete=models.CASCADE, related_name="cards")
     due_date = models.DateTimeField(null=True, blank=True)
 
+    objects = models.Manager()
+
     def __str__(self):
         return f"{self.list.title} - {self.title}"
 

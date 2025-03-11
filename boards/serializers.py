@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from drf_spectacular.utils import extend_schema_field
 
 from boards.models import Board, TaskList
 from workspaces.models import Workspace
@@ -15,6 +16,7 @@ class BoardSerializer(serializers.ModelSerializer):
         model = Board
         fields = ('id', 'title', 'workspace', 'workspace_id', 'visibility', 'background')
 
+    @extend_schema_field(serializers.CharField())
     def get_workspace(self, obj):
         return {"id": obj.workspace.id, "name": obj.workspace.name}
 
@@ -37,6 +39,7 @@ class TaskListSerializer(serializers.ModelSerializer):
         model = TaskList
         fields = ('id', 'title', 'board')
 
+    @extend_schema_field(serializers.CharField())
     def get_board(self, obj):
         return {"id": obj.board.id, "title": obj.board.title}
 
