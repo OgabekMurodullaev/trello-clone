@@ -3,7 +3,7 @@ from .models import *
 
 @admin.register(Card)
 class CardAdmin(admin.ModelAdmin):
-    list_display = ('title', 'list', 'due_date')
+    list_display = ('id', 'title', 'list', 'due_date')
     search_fields = ('title', 'list__title')
     list_filter = ('due_date',)
 

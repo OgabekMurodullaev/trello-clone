@@ -1,5 +1,9 @@
 from rest_framework import serializers
+from rest_framework.generics import get_object_or_404
+
+from accounts.models import User
 from .models import Card, CardMember
+
 
 class CardSerializer(serializers.ModelSerializer):
     class Meta:
@@ -10,7 +14,17 @@ class CardSerializer(serializers.ModelSerializer):
         return Card.objects.create(**validated_data)
 
 
-class CardMemberSerializer(serializers.ModelSerializer):
+class AddMemberCardSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField(write_only=True)
+
     class Meta:
         model = CardMember
-        fields = ("user", "added_at")
+        fields = ("user_id", "added_at")
+
+    def validate_user_id(self, value):
+        return get_object_or_404(User, id=value)
+
+    def create(self, validated_data):
+        user = validated_data.pop("user_id")
+        card = self.context["card"]
+        return CardMember.objects.create(user=user, card=card, **validated_data)

@@ -1,3 +1,4 @@
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.generics import get_object_or_404
@@ -7,9 +8,9 @@ from rest_framework.views import APIView
 from yaml import serialize
 
 from boards.models import TaskList, Board
-from boards.permissions import IsWorkspaceMemberOrOwner
-from .models import Card
-from cards.serializers import CardSerializer
+from boards.permissions import IsWorkspaceMemberOrOwner, IsOwnerOrReadOnly
+from .models import Card, CardMember
+from cards.serializers import CardSerializer, AddMemberCardSerializer
 
 
 class CardListCreateAPIView(APIView):
@@ -86,3 +87,35 @@ class CardDetailAPIView(APIView):
         self.check_object_permissions(request, card.list.board)
         card.delete()
         return Response(data={"detail": "Card deleted"}, status=status.HTTP_204_NO_CONTENT)
+
+
+class AddCardMemberAPIView(APIView):
+    permission_classes = [IsOwnerOrReadOnly]
+    serializer_class = AddMemberCardSerializer
+
+    def get_card(self, card_id):
+        return get_object_or_404(Card, id=card_id)
+
+    def post(self, request, card_id):
+        card = self.get_card(card_id)
+        self.check_object_permissions(request, card.list.board)
+
+        serializer = AddMemberCardSerializer(data=request.data, context={"card": card})
+        if serializer.is_valid():
+            serializer.save()
+            data = {
+                "detail": "Foydalanuvchi cardga qo'shildi",
+                "data": serializer.data
+            }
+            return Response(data=data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class RemoveCardMemberAPIView(APIView):
+    permission_classes = [IsOwnerOrReadOnly]
+    serializer_class = AddMemberCardSerializer
+
+    def delete(self, request, card_id, user_id):
+        card_member = get_object_or_404(CardMember, card__id=card_id, user__id=user_id)
+        card_member.delete()
+        return Response({"detail": "Member o'chirib tashlandi"}, status=status.HTTP_204_NO_CONTENT)
