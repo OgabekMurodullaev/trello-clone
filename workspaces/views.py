@@ -1,13 +1,15 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, generics
-from rest_framework.generics import get_object_or_404, DestroyAPIView
+from rest_framework.generics import get_object_or_404, DestroyAPIView, ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from accounts.models import User
+from workspaces.filters import MembersFilter
 from workspaces.models import Workspace, WorkspaceMember, WorkspaceInvitation
 from workspaces.permissions import IsOwnerOrMember
-from workspaces.serializers import WorkspaceSerializer, AddMemberWorkspaceSerializer, InviteMemberSerializer
+from workspaces.serializers import WorkspaceSerializer, MemberSerializer, AddMemberWorkspaceSerializer, InviteMemberSerializer
 from workspaces.tasks import send_invite_email
 
 
@@ -38,6 +40,14 @@ class WorkspaceRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIVie
         instance = self.get_object()
         instance.delete()
         return Response({"detail": "Workspace successfully deleted"}, status=status.HTTP_200_OK)
+
+
+class WorkspaceMembersListView(ListAPIView):
+    queryset = WorkspaceMember.objects.all()
+    permission_classes = [IsOwnerOrMember]
+    serializer_class = MemberSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = MembersFilter
 
 
 class InviteMemberToWorkspace(APIView):

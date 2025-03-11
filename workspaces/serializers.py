@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from accounts.models import User
+from accounts.serializers import UserSerializer
 from workspaces.models import Workspace, WorkspaceMember
 
 
@@ -12,6 +13,13 @@ class WorkspaceSerializer(serializers.ModelSerializer):
         fields = ("id", "name", "owner", "owner_email", "created_at")
         read_only_fields = ("id", "owner", "owner_email", "created_at")
 
+
+class MemberSerializer(serializers.ModelSerializer):
+    member = UserSerializer()
+
+    class Meta:
+        model = WorkspaceMember
+        fields = ("id", "member", "is_active")
 
 class AddMemberWorkspaceSerializer(serializers.ModelSerializer):
     member_email = serializers.EmailField(write_only=True)

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Card
+from .models import Card, CardMember
 
 class CardSerializer(serializers.ModelSerializer):
     class Meta:
@@ -8,3 +8,9 @@ class CardSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return Card.objects.create(**validated_data)
+
+
+class CardMemberSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CardMember
+        fields = ("user", "added_at")
