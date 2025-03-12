@@ -1,16 +1,14 @@
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from yaml import serialize
 
 from boards.models import TaskList, Board
 from boards.permissions import IsWorkspaceMemberOrOwner, IsOwnerOrReadOnly
-from .models import Card, CardMember
-from cards.serializers import CardSerializer, AddMemberCardSerializer
+from .models import Card, CardMember, Attachment
+from cards.serializers import CardSerializer, AddMemberCardSerializer, AttachmentSerializer
 
 
 class CardListCreateAPIView(APIView):
@@ -88,6 +86,23 @@ class CardDetailAPIView(APIView):
         card.delete()
         return Response(data={"detail": "Card deleted"}, status=status.HTTP_204_NO_CONTENT)
 
+
+class AttachmentListCreateAPIView(APIView):
+    permission_classes = [IsAuthenticated,]
+    serializer_class = AttachmentSerializer
+
+    def get(self, request, card_id):
+
+        attachments = Attachment.objects.filter(card_id=card_id)
+        serializer = AttachmentSerializer(attachments, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, card_id):
+        serializer = AttachmentSerializer(data=request.data, context={"request": request})
+        if serializer.is_valid():
+            serializer.save(card_id=card_id)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class AddCardMemberAPIView(APIView):
     permission_classes = [IsOwnerOrReadOnly]

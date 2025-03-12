@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework.generics import get_object_or_404
 
 from accounts.models import User
-from .models import Card, CardMember
+from .models import Card, CardMember, Attachment
 
 
 class CardSerializer(serializers.ModelSerializer):
@@ -12,6 +12,17 @@ class CardSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return Card.objects.create(**validated_data)
+
+
+class AttachmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Attachment
+        fields = ("id", "card", "uploaded_by", "file", "uploaded_at")
+        read_only_fields = ("id", "uploaded_by", "uploaded_at")
+
+    def create(self, validated_data):
+        validated_data['uploaded_by'] = self.context['request'].user
+        return super().create(validated_data)
 
 
 class AddMemberCardSerializer(serializers.ModelSerializer):

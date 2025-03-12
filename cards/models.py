@@ -26,6 +26,8 @@ class Attachment(models.Model):
     file = models.FileField(upload_to="attachments/")
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
+    objects = models.Manager()
+
 
 class CardMember(models.Model):
     card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name="members")
@@ -50,6 +52,8 @@ class Comment(models.Model):
     image = models.ImageField(upload_to="comment-images/", null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    objects = models.Manager()
 
     def __str__(self):
         return f"{self.card.title} - comment by {self.user.email}"
