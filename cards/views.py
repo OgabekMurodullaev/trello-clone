@@ -9,6 +9,7 @@ from boards.models import TaskList, Board
 from boards.permissions import IsWorkspaceMemberOrOwner, IsOwnerOrReadOnly
 from .models import Card, CardMember, Attachment
 from cards.serializers import CardSerializer, AddMemberCardSerializer, AttachmentSerializer
+from .permissions import IsOwnerOrCardMember, CanDeleteAttachment
 
 
 class CardListCreateAPIView(APIView):
@@ -88,11 +89,12 @@ class CardDetailAPIView(APIView):
 
 
 class AttachmentListCreateAPIView(APIView):
-    permission_classes = [IsAuthenticated,]
+    permission_classes = [IsAuthenticated, IsOwnerOrCardMember]
     serializer_class = AttachmentSerializer
 
     def get(self, request, card_id):
-
+        card = get_object_or_404(Card, id=card_id)
+        self.check_object_permissions(request, card)
         attachments = Attachment.objects.filter(card_id=card_id)
         serializer = AttachmentSerializer(attachments, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -100,9 +102,30 @@ class AttachmentListCreateAPIView(APIView):
     def post(self, request, card_id):
         serializer = AttachmentSerializer(data=request.data, context={"request": request})
         if serializer.is_valid():
-            serializer.save(card_id=card_id)
+            serializer.save(card_id=self.kwargs["card_id"])
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AttachmentDetailAPIView(APIView):
+    permission_classes = [CanDeleteAttachment]
+    serializer_class = AttachmentSerializer
+
+    def get_object(self, card_id, attachment_id):
+        return get_object_or_404(Attachment, card_id=card_id, id=attachment_id)
+
+    def get(self, request, card_id, attachment_id):
+        attachment = self.get_object(card_id, attachment_id)
+        serializer = AttachmentSerializer(attachment)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+    def delete(self, request, card_id, attachment_id):
+        attachment = self.get_object(card_id, attachment_id)
+        self.check_object_permissions(request, attachment)
+        attachment.delete()
+        return Response(data={"detail": "Attachment deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+
 
 class AddCardMemberAPIView(APIView):
     permission_classes = [IsOwnerOrReadOnly]

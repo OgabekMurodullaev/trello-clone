@@ -17,7 +17,7 @@ class CardSerializer(serializers.ModelSerializer):
 class AttachmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Attachment
-        fields = ("id", "card", "uploaded_by", "file", "uploaded_at")
+        fields = ("id", "uploaded_by", "file", "uploaded_at")
         read_only_fields = ("id", "uploaded_by", "uploaded_at")
 
     def create(self, validated_data):

@@ -8,7 +8,7 @@ from rest_framework.views import APIView, set_rollback
 from boards.models import Board, TaskList
 from boards.serializers import BoardSerializer, TaskListSerializer
 from boards.permissions import IsOwnerOrReadOnly, IsWorkspaceMemberOrOwner
-from workspaces.models import  Workspace
+from workspaces.models import  WorkspaceMember
 
 
 class BoardListCreateAPIView(APIView):
@@ -16,7 +16,7 @@ class BoardListCreateAPIView(APIView):
     serializer_class = BoardSerializer
 
     def get(self, request):
-        workspaces = Workspace.objects.filter(member=request.user, is_active=True).values_list("workspace_id", flat=True)
+        workspaces = WorkspaceMember.objects.filter(member=request.user, is_active=True).values_list("workspace_id", flat=True)
         boards = Board.objects.filter(workspace_id__in=workspaces).select_related("workspace")
         serializer = BoardSerializer(boards, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

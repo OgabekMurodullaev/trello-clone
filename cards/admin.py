@@ -10,7 +10,7 @@ class CardAdmin(admin.ModelAdmin):
 
 @admin.register(Attachment)
 class AttachmentAdmin(admin.ModelAdmin):
-    list_display = ('card', 'uploaded_by', 'uploaded_at')
+    list_display = ('id', 'card', 'uploaded_by', 'uploaded_at')
 
 
 @admin.register(CardMember)
