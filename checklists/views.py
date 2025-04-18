@@ -37,16 +37,16 @@ class CheckListDetailAPIView(APIView):
         except CheckList.DoesNotExist:
             return None
 
-    def get(self, request, list_id):
-        checklist = self.get_object(list_id)
+    def get(self, request, checklist_id):
+        checklist = self.get_object(checklist_id)
         if not checklist:
             return Response({'detail': 'Not found.'}, status=status.HTTP_404_NOT_FOUND)
         self.check_object_permissions(request, checklist)
         serializer = CheckListSerializer(checklist)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def put(self, request, list_id):
-        checklist = self.get_object(list_id)
+    def put(self, request, checklist_id):
+        checklist = self.get_object(checklist_id)
         if not checklist:
             return Response({'detail': 'Not found.'}, status=status.HTTP_404_NOT_FOUND)
         self.check_object_permissions(request, checklist)
@@ -56,8 +56,8 @@ class CheckListDetailAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def patch(self, request, list_id):
-        checklist = self.get_object(list_id)
+    def patch(self, request, checklist_id):
+        checklist = self.get_object(checklist_id)
         if not checklist:
             return Response({'detail': 'Not found.'}, status=status.HTTP_404_NOT_FOUND)
         self.check_object_permissions(request, checklist)
@@ -67,8 +67,8 @@ class CheckListDetailAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, list_id):
-        checklist = self.get_object(list_id)
+    def delete(self, request, checklist_id):
+        checklist = self.get_object(checklist_id)
         if not checklist:
             return Response({'detail': 'Not found.'}, status=status.HTTP_404_NOT_FOUND)
         self.check_object_permissions(request, checklist)
