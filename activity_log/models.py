@@ -20,6 +20,8 @@ class ActivityLog(models.Model):
     action_description = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    objects = models.Manager()
+
     def __str__(self):
         return f"[{self.created_at.strftime('%Y-%m-%d %H:%M')}] {self.user} {self.action_type} - {self.action_description}"
 
