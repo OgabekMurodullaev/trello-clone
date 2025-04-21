@@ -5,4 +5,4 @@ from activity_log.models import ActivityLog
 
 @admin.register(ActivityLog)
 class ActivityLogAdmin(admin.ModelAdmin):
-    list_display = ["id", "board", "user", "action"]
+    list_display = ["id", "board", "user", "action_type"]
