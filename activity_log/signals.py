@@ -5,7 +5,7 @@ from django.dispatch import receiver
 
 from activity_log.models import ActivityLog
 from boards.models import TaskList
-from cards.models import Card, Comment, Attachment
+from cards.models import Card, Comment, Attachment, CardMember
 from checklists.models import CheckListItem
 
 _thread_locals = threading.local()
@@ -104,3 +104,23 @@ def log_attachment_created(sender, instance, created, **kwargs):
             action_type=ActivityLog.ActionType.OTHER,
             action_description=f"'{instance.card.title}' kartasiga fayl qo'shildi."
         )
+
+# CardMember signals
+@receiver(post_save, sender=CardMember)
+def log_cardmember_creation(sender, instance, created, **kwargs):
+    if created:
+        ActivityLog.objects.create(
+            board=instance.card.list.board,
+            user=get_current_user(),
+            action_type=ActivityLog.ActionType.OTHER,
+            action_description=f"'{instance.card.title}' kartasiga '{instance.user.email}' a’zo sifatida qo‘shildi."
+        )
+
+@receiver(post_delete, sender=CardMember)
+def log_cardmember_deleted(sender, instance, **kwargs):
+    ActivityLog.objects.create(
+        board=instance.card.list.board,
+        user=get_current_user(),
+        action_type=ActivityLog.ActionType.OTHER,
+        action_description="'{instance.card.title}' kartasidan '{instance.user.email}' a’zo sifatida o‘chirildi."
+    )
