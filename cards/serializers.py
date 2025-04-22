@@ -2,13 +2,19 @@ from rest_framework import serializers
 from rest_framework.generics import get_object_or_404
 
 from accounts.models import User
+from boards.models import TaskList
 from .models import Card, CardMember, Attachment
 
 
 class CardSerializer(serializers.ModelSerializer):
+    list = serializers.PrimaryKeyRelatedField(
+        queryset=TaskList.objects.all(),
+        required=False
+    )
     class Meta:
         model = Card
-        fields = "__all__"
+        fields = ["id", "title", "description", "due_date", "list"]
+        read_only_fields = ["id"]
 
     def create(self, validated_data):
         return Card.objects.create(**validated_data)

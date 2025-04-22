@@ -30,8 +30,9 @@ class CardListCreateAPIView(APIView):
         self.check_object_permissions(request, board)
 
         list_obj = get_object_or_404(TaskList, id=list_id)
-
-        serializer = CardSerializer(data=request.data)
+        data = request.data.copy()
+        data["list"] = list_obj.id
+        serializer = CardSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)

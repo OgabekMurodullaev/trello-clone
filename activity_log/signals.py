@@ -13,6 +13,7 @@ _thread_locals = threading.local()
 def get_current_user():
     return getattr(_thread_locals, 'user', None)
 
+# Card signals
 @receiver(post_save, sender=Card)
 def log_card_creation(sender, instance, created, **kwargs):
     if created:
@@ -26,7 +27,7 @@ def log_card_creation(sender, instance, created, **kwargs):
 @receiver(post_delete, sender=Card)
 def log_card_delete(sender, instance, **kwargs):
     ActivityLog.objects.create(
-        board=instance.board,
+        board=instance.list.board,
         user=get_current_user(),
         action_type=ActivityLog.ActionType.DELETED,
         action_description=f"'{instance.title}' kartasi o'chirildi."
@@ -53,6 +54,7 @@ def log_card_update(sender, instance, **kwargs):
                 action_description=f"'{old_instance.title}' karta sarlavhasi '{instance.title}' ga o'zgartirildi."
             )
 
+# Comment signals
 @receiver(post_save, sender=Comment)
 def log_comment_creation(sender, instance, created, **kwargs):
     if created:
@@ -63,6 +65,7 @@ def log_comment_creation(sender, instance, created, **kwargs):
             action_description=f"'{instance.card.title}' kartasiga sharh qo‘shildi: '{instance.text[:50]}...'"
         )
 
+# CheckListItem signals
 @receiver(pre_save, sender=CheckListItem)
 def log_checklist_item_update(sender, instance, **kwargs):
     if instance.id:
@@ -76,6 +79,7 @@ def log_checklist_item_update(sender, instance, **kwargs):
                 action_description=f"'{instance.checklist.card.title}' kartasidagi '{instance.text}' checklist elementi {status}."
             )
 
+# TaskList signals
 @receiver(post_save, sender=TaskList)
 def log_tasklist_creation(sender, instance, created, **kwargs):
     if created:
@@ -95,6 +99,7 @@ def log_tasklist_delete(sender, instance, **kwargs):
         action_description=f"'{instance.title}' ro‘yxati o‘chirildi."
     )
 
+# Attachment signals
 @receiver(post_save, sender=Attachment)
 def log_attachment_created(sender, instance, created, **kwargs):
     if created:
