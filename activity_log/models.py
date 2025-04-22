@@ -25,9 +25,10 @@ class ActivityLog(models.Model):
     def __str__(self):
         return f"[{self.created_at.strftime('%Y-%m-%d %H:%M')}] {self.user} {self.action_type} - {self.action_description}"
 
-
-
     class Meta:
         verbose_name = "Activity Log"
         verbose_name_plural = "Activity Logs"
-        ordering = ['-created_at']
+
+        indexes = [
+            models.Index(fields=['board', '-created_at'])
+        ]

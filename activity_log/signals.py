@@ -122,5 +122,5 @@ def log_cardmember_deleted(sender, instance, **kwargs):
         board=instance.card.list.board,
         user=get_current_user(),
         action_type=ActivityLog.ActionType.OTHER,
-        action_description="'{instance.card.title}' kartasidan '{instance.user.email}' a’zo sifatida o‘chirildi."
+        action_description=f"'{instance.card.title}' kartasidan '{instance.user.email}' a’zo sifatida o‘chirildi."
     )
